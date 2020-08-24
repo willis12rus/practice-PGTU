@@ -156,12 +156,6 @@
     can be found.
   -->
   <ItemGroup>
-    <Compile Include="AddCategory.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AddCategory.Designer.cs">
-      <DependentUpon>AddCategory.cs</DependentUpon>
-    </Compile>
     <Compile Include="InputForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -171,9 +165,6 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="AddCategory.resx">
-      <DependentUpon>AddCategory.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="InputForm.resx">
       <DependentUpon>InputForm.cs</DependentUpon>
     </EmbeddedResource>

@@ -64,8 +64,9 @@
             // 
             // button2
             // 
-            this.button2.Label = "Добавить категорию номеров";
+            this.button2.Label = "Создать таблицу по всем номерам";
             this.button2.Name = "button2";
+            this.button2.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.button2_Click);
             // 
             // TestRibbon
             // 

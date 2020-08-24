@@ -11,11 +11,12 @@ using Microsoft.Office.Interop.Excel;
 using _Excel = Microsoft.Office.Interop.Excel;
 
 namespace TestAddin
-{
+{   
+
     public partial class InputForm : Form
     {
-        public static int currentString = 1, currentCollum = 0;
-        public static int entryDateCollum = 6, departureDateCollum = 8;
+        public static int currentCollum = 0;
+        public static int entryDateCollum = 2, departureDateCollum = 4, roomCategoryCollum = 5;
         public InputForm()
         {
             InitializeComponent();
@@ -28,32 +29,31 @@ namespace TestAddin
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string hotel = textBox1.Text;
-            string categoryName = textBox2.Text;
-            int categoryCount = Convert.ToInt32(textBox3.Text);
-            
+            Hotel.name = textBox1.Text;
+            Hotel.categoryCount = Convert.ToInt32(textBox2.Text);
+            Hotel.entry = dateTimePicker1.Value;
+            Hotel.departure = dateTimePicker2.Value;
+
             Worksheet currentWorksheet = Globals.ThisAddIn.Application.ActiveSheet;
             string entryDate = dateTimePicker1.Value.ToShortDateString();
             string departureDate = dateTimePicker2.Value.ToShortDateString();
 
             //currentWorksheet.Cells[1, 1] = temp2.AddDays(1);
             //currentWorksheet.Cells[1, 2] = "Категория";
-            PrintHead(ref currentWorksheet);
-            for (int i = currentString; i < categoryCount+1; ++i)
+            //PrintHead(ref currentWorksheet);
+            PrintLittleHead(ref currentWorksheet);
+
+            for (int i = Hotel.currentStr; i < Hotel.categoryCount + 1; ++i)
             {
                 for (int j = 0; j < 9; ++j)
                 {
-                    if (j == 0)
-                    {
-                        currentWorksheet.Cells[i + 1, j + 1] = hotel;
-                    }
-                    else if (j == 5) { currentWorksheet.Cells[i + 1, j + 1] = categoryName; }
-                    else if (j == entryDateCollum) { currentWorksheet.Cells[i + 1, j + 1] = entryDate; }
+                    if (j == entryDateCollum) { currentWorksheet.Cells[i + 1, j + 1] = entryDate; }
                     else if (j == departureDateCollum) { currentWorksheet.Cells[i + 1, j + 1] = departureDate; }
 
                 }
-                if(i == categoryCount) { currentString = i; }
+                if (i == Hotel.categoryCount-1) { Hotel.currentStr = i+3; }
             }
+            PrintBigHead(ref currentWorksheet);
             currentWorksheet.Columns.AutoFit();
             this.Close();
         }
@@ -78,6 +78,11 @@ namespace TestAddin
 
         }
 
+        private void InputForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
 
@@ -88,24 +93,43 @@ namespace TestAddin
 
         }
 
-        public void PrintHead(ref Worksheet currentWorksheet)
+        public void PrintLittleHead(ref Worksheet currentWorksheet)
         {
-            currentWorksheet.Cells[1, 1] = "Объект Размещения";
-            currentWorksheet.Cells[1, 2] = "Группа";
-            currentWorksheet.Cells[1, 3] = "Номер комнаты";
-            currentWorksheet.Cells[1, 4] = "ФИО";
-            currentWorksheet.Cells[1, 5] = "Кол-во чел. в номере";
-            currentWorksheet.Cells[1, 6] = "Номер";
-            currentWorksheet.Cells[1, 7] = "Заезд";
-            currentWorksheet.Cells[1, 9] = "Выезд";
+            currentWorksheet.Cells[1, 1] = "Название категории";
+            currentWorksheet.Cells[1, 3] = "Заезд";
+            currentWorksheet.Cells[1, 5] = "Выезд";
+            int tempCollum = 7;
+            PrintDates(currentWorksheet, 1, ref tempCollum);
+            tempCollum++;
+            currentWorksheet.Cells[1, tempCollum] = "Одноместный";
+            tempCollum++;
+            currentWorksheet.Cells[1, tempCollum] = "Двухместный";
+        }
+
+        public void PrintBigHead(ref Worksheet currentWorksheet)
+        {
+            currentWorksheet.Cells[Hotel.currentStr, 1] = "Объект Размещения";
+            currentWorksheet.Cells[Hotel.currentStr, 2] = "Группа";
+            currentWorksheet.Cells[Hotel.currentStr, 3] = "Номер комнаты";
+            currentWorksheet.Cells[Hotel.currentStr, 4] = "ФИО";
+            currentWorksheet.Cells[Hotel.currentStr, 5] = "Кол-во чел. в номере";
+            currentWorksheet.Cells[Hotel.currentStr, 6] = "Номер";
+            currentWorksheet.Cells[Hotel.currentStr, 7] = "Заезд";
+            currentWorksheet.Cells[Hotel.currentStr, 9] = "Выезд";
             int tempCollum = 11;
-            //DateTime entry = dateTimePicker1.Value;
+            PrintDates(currentWorksheet, Hotel.currentStr, ref tempCollum);
+        }
+
+        public void PrintDates(Worksheet currentWorksheet, int str, ref int collum)
+        {
+
+            DateTime entry = dateTimePicker1.Value;
             DateTime departure = dateTimePicker2.Value;
-            for (DateTime temp = dateTimePicker1.Value; temp <= departure; temp = temp.AddDays(1))
+            for (DateTime temp = entry; temp.ToShortDateString() != departure.AddDays(1).ToShortDateString(); temp = temp.AddDays(1))
             {
                 //temp =  temp.AddDays(1);
-                currentWorksheet.Cells[1, tempCollum] = temp.ToShortDateString();
-                ++tempCollum;
+                currentWorksheet.Cells[str, collum] = temp.ToShortDateString();
+                ++collum;
             };
         }
     }
